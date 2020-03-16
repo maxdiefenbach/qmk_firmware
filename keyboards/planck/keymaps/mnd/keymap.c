@@ -27,6 +27,7 @@ enum planck_layers {
   _LOWER,
   _RAISE,
   _PLOVER,
+  _STENO,
   _ADJUST
 };
 
@@ -35,6 +36,7 @@ enum planck_keycodes {
   COLEMAK,
   DVORAK,
   PLOVER,
+  STENO,
   BACKLIT,
   EXT_PLV
 };
@@ -89,12 +91,19 @@ XXXXXXX,  STN_S2,   STN_KL,   STN_WL,   STN_RL,  STN_ST2,  STN_ST4,  STN_RR,  ST
 EXT_PLV,  XXXXXXX,  XXXXXXX,  XXXXXXX,  STN_A,   STN_O,    STN_E,    STN_U,   XXXXXXX,  STN_PWR,  STN_RE1,  STN_RE2
 ),
 
+[_STENO] = LAYOUT_planck_grid(
+QWERTY,   KC_1,    KC_2,   KC_3,   KC_4,  KC_5,  KC_6,  KC_7,  KC_8,     KC_9,    KC_0,     XXXXXXX,
+XXXXXXX,  KC_Q,    KC_W,   KC_E,   KC_R,  KC_T,  KC_Y,  KC_U,  KC_I,     KC_O,    KC_P,     XXXXXXX,
+XXXXXXX,  KC_A,    KC_S,   KC_D,   KC_F,  KC_G,  KC_H,  KC_J,  KC_K,     KC_L,    KC_SCLN,  XXXXXXX,
+XXXXXXX,  XXXXXXX, RAISE,  LOWER,  KC_C,  KC_V,  KC_N,  KC_M,  XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX
+),
+
 /* Adjust (Lower + Raise)
  *                      v------------------------RGB CONTROL--------------------v
  * ,-----------------------------------------------------------------------------------.
  * |      | Reset|Debug | RGB  |RGBMOD| HUE+ | HUE- | SAT+ | SAT- |BRGTH+|BRGTH-|  Del |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |MUSmod|Aud on|Audoff|AGnorm|AGswap|Qwerty|Colemk|Dvorak|Plover|      |
+ * |      |      |MUSmod|Aud on|Audoff|AGnorm|AGswap|Qwerty|Colemk|Dvorak|Plover| Steno|
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |Voice-|Voice+|Mus on|Musoff|MIDIon|MIDIof|TermOn|TermOf|      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -103,7 +112,7 @@ EXT_PLV,  XXXXXXX,  XXXXXXX,  XXXXXXX,  STN_A,   STN_O,    STN_E,    STN_U,   XX
  */
 [_ADJUST] = LAYOUT_planck_grid(
     _______, RESET,   DEBUG,   RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD,  RGB_VAI, RGB_VAD, KC_DEL ,
-    _______, _______, MU_MOD,  AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  COLEMAK,  DVORAK,  PLOVER,  _______,
+    _______, _______, MU_MOD,  AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  COLEMAK,  DVORAK,  PLOVER,  STENO,
     _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  TERM_ON, TERM_OFF, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______
 )
@@ -173,6 +182,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         keymap_config.raw = eeconfig_read_keymap();
         keymap_config.nkro = 1;
         eeconfig_update_keymap(keymap_config.raw);
+      }
+      return false;
+      break;
+    case STENO:
+      if (record->event.pressed) {
+        set_single_persistent_default_layer(_STENO);
       }
       return false;
       break;
